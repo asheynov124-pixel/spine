@@ -1,0 +1,33 @@
+{
+  "id": "continuity-odyssey",
+  "productName": "Continuity",
+  "hopPolicy": "watermark",
+  "tonePrimary": "spoilers",
+  "clock": 8,
+  "clockMax": 24,
+  "nouns": {
+    "discover": "Board",
+    "atlas": "Atlas",
+    "packs": "Canons",
+    "activity": "Activity",
+    "search": "Search",
+    "record": "Entry",
+    "path": "Continuity trail",
+    "defaultPack": "Read later"
+  },
+  "rails": ["On deck", "Because you just finished", "Canon"],
+  "atlasLayers": ["story", "world"],
+  "records": [
+    {"id": "odysseus", "title": "Odysseus", "type": "character", "firstAppearsIn": 1, "spoilersAfter": 22, "layer": "story", "summary": "King of Ithaca, still at sea.", "body": "Safe slice through Book 8: guest of the Phaeacians. Later identity and return are sealed.", "outgoing": ["penelope", "ithaca", "scheria"]},
+    {"id": "telemachus", "title": "Telemachus", "type": "character", "firstAppearsIn": 1, "spoilersAfter": 16, "layer": "story", "summary": "Son of Odysseus, searching.", "body": "Books 1–4 follow his journey. Reunion is later.", "outgoing": ["odysseus", "penelope"]},
+    {"id": "penelope", "title": "Penelope", "type": "character", "firstAppearsIn": 1, "spoilersAfter": 19, "layer": "story", "summary": "Queen of Ithaca.", "body": "Holds the household. Recognition and the bow are after your watermark if you are on Book 8.", "outgoing": ["odysseus", "ithaca"]},
+    {"id": "athena", "title": "Athena", "type": "character", "firstAppearsIn": 1, "spoilersAfter": 24, "layer": "story", "summary": "Guardian goddess.", "body": "Appears in disguise from the first book.", "outgoing": ["telemachus", "odysseus"]},
+    {"id": "nausicaa", "title": "Nausicaa", "type": "character", "firstAppearsIn": 6, "spoilersAfter": 8, "layer": "story", "summary": "Phaeacian princess.", "body": "Finds Odysseus on the shore of Scheria.", "outgoing": ["alcinous", "scheria"]},
+    {"id": "alcinous", "title": "Alcinous", "type": "character", "firstAppearsIn": 6, "spoilersAfter": 13, "layer": "story", "summary": "King of the Phaeacians.", "body": "Host in Books 6–8.", "outgoing": ["nausicaa", "scheria"]},
+    {"id": "ithaca", "title": "Ithaca", "type": "place", "firstAppearsIn": 1, "spoilersAfter": 24, "layer": "story", "geo": {"label": "Ithaca", "lat": 38.44, "lng": 20.64}, "summary": "Home island.", "body": "Named from Book 1. What happens on the return is sealed.", "outgoing": ["odysseus"]},
+    {"id": "scheria", "title": "Scheria", "type": "place", "firstAppearsIn": 6, "spoilersAfter": 13, "layer": "story", "geo": {"label": "Scheria", "lat": 39.62, "lng": 19.92}, "summary": "Land of the Phaeacians.", "body": "Setting of Books 6–8.", "outgoing": ["nausicaa", "alcinous"]},
+    {"id": "troy", "title": "Troy", "type": "place", "firstAppearsIn": 1, "spoilersAfter": 1, "layer": "world", "geo": {"label": "Hisarlik", "lat": 39.96, "lng": 26.24}, "summary": "The war already past when the poem opens.", "body": "World layer: claimed site at Hisarlik.", "outgoing": ["odysseus"]},
+    {"id": "polyphemus", "title": "Polyphemus", "type": "character", "firstAppearsIn": 9, "spoilersAfter": 9, "layer": "story", "summary": "Unborn at watermark 8.", "body": "Do not list this card until Book 9.", "outgoing": ["odysseus"]},
+    {"id": "return", "title": "The return", "type": "scene", "firstAppearsIn": 13, "spoilersAfter": 13, "layer": "story", "summary": "Unborn at watermark 8.", "body": "Search for return should miss until the watermark moves.", "outgoing": ["ithaca"]}
+  ]
+}
