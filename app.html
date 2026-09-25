@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Spine</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0d10;--card:#16181e;--line:#2a2d36;--text:#e8eaef;--muted:#9aa4b5;--accent:#8aa0b3;--sealed:#c17b64;font-family:ui-sans-serif,system-ui,sans-serif}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+#app{max-width:430px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+#app.red{--bg:#140303;--card:#1c0808;--line:#3a1515;--text:#f0c9c9;--muted:#c17b64;--accent:#e08a7a}
+header{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:center}
+.brand{font-weight:700}
+button,input{font:inherit;color:inherit}
+.chip,.card,.tab,.sheet button,.banner span{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px}
+.chip.on,.tab.on{border-color:var(--accent);color:var(--accent)}
+main{flex:1;overflow:auto;padding:12px 14px 96px}
+.rail{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.card{display:block;width:100%;text-align:left;border-radius:14px;padding:12px;margin:0 0 8px}
+.card.sealed{border-color:var(--sealed)}
+.muted{color:var(--muted)}
+nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 10px 18px;background:var(--bg);border-top:1px solid var(--line)}
+.tab{border-radius:12px;padding:8px 4px;font-size:11px;background:transparent}
+.path{color:var(--accent);font-size:13px}
+.banner{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.panel{width:min(430px,100%);background:var(--card);border-radius:18px 18px 0 0;padding:16px}
+.panel button{width:100%;margin-top:6px;border-radius:12px}
+input[type=range],input[type=search]{width:100%;margin:8px 0;background:transparent}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const corpora = [
+  {
+    id:"continuity-odyssey", name:"Continuity", hop:"watermark", tone:"spoilers",
+    nouns:{discover:"Board",atlas:"Atlas",packs:"Canons",activity:"Activity",search:"Search",pack:"Read later"},
+    rails:["On deck","Because you just finished","Canon"], layers:["story","world"], clockMax:24, clock:8,
+    records:[
+      {id:"b8",title:"Book 8",type:"book",sum:"Games on Scheria",body:"Odysseus weeps at the song of Troy.",first:8,spoil:8,assigned:true,layer:"story",out:["alk","sch"]},
+      {id:"alk",title:"Alcinous",type:"character",sum:"King of the Phaeacians",body:"Host on Scheria. Safe at book 8.",first:6,spoil:13,assigned:true,out:["sch","pen"]},
+      {id:"sch",title:"Scheria",type:"place",sum:"Phaeacian island",body:"The island of safety before the return.",first:6,spoil:13,geo:"Scheria",layer:"story",out:["ith"]},
+      {id:"pen",title:"Penelope",type:"character",sum:"Sealed after book 8",body:"Her later trial belongs to book 19.",first:1,spoil:19,out:["ret"]},
+      {id:"ith",title:"Ithaca",type:"place",sum:"Home",body:"The island that is waiting.",first:1,spoil:22,geo:"Ithaca",layer:"story",out:["ret"]},
+      {id:"bak",title:"Ithaca, Greece",type:"place",sum:"World pin",body:"Modern island used as a world-layer analogue.",first:1,spoil:1,geo:"Ithaki",layer:"world",out:[]},
+      {id:"ret",title:"The return",type:"scene",sum:"Unborn at book 8",body:"The slaughter in the hall.",first:22,spoil:22,out:[]}
+    ]
+  },
+  {
+    id:"nightglass-personal", name:"Nightglass", hop:"look-cone", tone:"dim-charts",
+    nouns:{discover:"Tonight",atlas:"Sky",packs:"Nights",activity:"Activity",search:"Search",pack:"Look later"},
+    rails:["Up tonight","Because you logged","Canon"], layers:["dome","ground"], clockMax:0, clock:0,
+    records:[
+      {id:"moon",title:"Moon",type:"moon",sum:"Always findable",body:"Bundled. Works in a basement with a default latitude.",assigned:true,layer:"dome",geo:"sky",out:["jup"]},
+      {id:"jup",title:"Jupiter",type:"planet",sum:"Bright",body:"Naked-eye planet. Path: Moon → Jupiter → neighbors.",assigned:true,layer:"dome",geo:"sky",out:["m13"]},
+      {id:"m13",title:"M13",type:"deep-sky",sum:"Hercules cluster",body:"Messier 13. Offline blurb for the demo.",assigned:true,layer:"dome",out:[]},
+      {id:"home",title:"Hillsdale, NJ",type:"site",sum:"Default home",body:"40.96 N, 74.04 W. Location stays on device.",assigned:true,layer:"ground",geo:"Hillsdale",out:[]}
+    ]
+  },
+  {
+    id:"provenance-cma", name:"Provenance", hop:"room-bound", tone:"graphic",
+    nouns:{discover:"On view",atlas:"Atlas",packs:"Visits",activity:"Activity",search:"Search",pack:"See later"},
+    rails:["On view now","Because you stood here","Canon of this house"], layers:["gallery","origin"], clockMax:0, clock:0,
+    records:[
+      {id:"water",title:"Water Lilies",type:"work",sum:"Gallery A",body:"Tombstone demo. Credit: Cleveland Museum of Art Open Access, CC0 where marked.",assigned:true,layer:"gallery",geo:"Giverny",out:["monet"]},
+      {id:"monet",title:"Monet",type:"maker",sum:"Maker",body:"Related maker page.",assigned:true,layer:"origin",out:["egypt"]},
+      {id:"egypt",title:"Coffin fragment",type:"work",sum:"Extra / other floor",body:"Outside this floor mock. Confirm sheet, not a silent hop.",assigned:false,layer:"origin",geo:"Egypt",out:[]}
+    ]
+  }
+];
+
+const S = { corpus:0, tab:"discover", open:null, pending:null, trail:[], q:"" };
+
+function hop(c, r){
+  if(c.hop==="watermark"){
+    const first=r.first??0, spoil=r.spoil??first;
+    if(first>c.clock) return "unborn";
+    if(spoil>c.clock) return "sealed";
+    return "safe";
+  }
+  if(c.hop==="room-bound" && r.assigned===false) return "extra";
+  return "safe";
+}
+function vis(c){ return c.records.filter(r=>hop(c,r)!=="unborn"); }
+function copy(c,r){
+  if(c.hop==="watermark") return {t:"This is after your watermark",b:r.title+" continues after book "+c.clock+"."};
+  if(c.hop==="room-bound") return {t:"This is outside this floor",b:r.title+" is not in the current gallery bound."};
+  return {t:"Step outside",b:r.title};
+}
+function enter(r){ S.open=r.id; S.pending=null; if(S.trail[S.trail.length-1]!==r.title) S.trail=[...S.trail,r.title]; render(); }
+function ask(c,r){ const st=hop(c,r); if(st==="sealed"||st==="extra"||st==="unborn"){ S.pending=r.id; render(); return;} enter(r); }
+function setCorpus(i){ S.corpus=i; S.tab="discover"; S.open=null; S.pending=null; S.trail=[]; S.q=""; render(); }
+
+function render(){
+  const c=corpora[S.corpus];
+  const app=document.getElementById("app");
+  app.className = c.tone==="dim-charts" ? "red" : "";
+  const recs=vis(c);
+  const open=recs.find(r=>r.id===S.open);
+  const pending=c.records.find(r=>r.id===S.pending);
+  const tabs=["discover","atlas","packs","activity","search"];
+  const names=c.nouns;
+  let main="";
+  if(open){
+    const rel=open.out.map(id=>c.records.find(r=>r.id===id)).filter(Boolean).filter(r=>hop(c,r)!=="unborn");
+    main=`<button class="chip" onclick="S.open=null;render()">Back</button>
+      ${S.trail.length>1?`<p class="path">${S.trail.join(" → ")}</p>`:""}
+      <h1>${open.title}</h1>
+      <div class="banner"><span>${open.type}</span><span>${hop(c,open)}</span><span>${names.pack}</span></div>
+      <p>${open.body}</p>
+      <p class="rail">Related</p>
+      ${rel.map(r=>`<button class="card ${hop(c,r)==="sealed"?"sealed":""}" onclick='ask(corpora[S.corpus], corpora[S.corpus].records.find(x=>x.id==="${r.id}"))'>${r.title}<br><small>${hop(c,r)}</small></button>`).join("")}`;
+  } else if(S.tab==="discover"){
+    const groups=[recs.filter(r=>r.assigned!==false).slice(0,3), recs.slice(0,3), recs.slice(-3)];
+    main=c.rails.map((label,i)=>`<p class="rail">${label}</p>${groups[i].map(r=>`<button class="card ${hop(c,r)==="sealed"?"sealed":""}" onclick='ask(corpora[S.corpus], corpora[S.corpus].records.find(x=>x.id==="${r.id}"))'>${r.title}<br><small>${r.type} · ${r.sum}</small></button>`).join("")}`).join("");
+  } else if(S.tab==="atlas"){
+    const pins=recs.filter(r=>r.layer||r.geo);
+    main=`<p class="rail">${c.layers.join(" / ")}</p>${pins.map(r=>`<button class="card" onclick='ask(corpora[S.corpus], corpora[S.corpus].records.find(x=>x.id==="${r.id}"))'>${r.title}<br><small>${r.geo||r.layer} · ${r.type}</small></button>`).join("")}`;
+  } else if(S.tab==="packs"){
+    main=`<p class="rail">${names.pack}</p><div class="card">Default pack is named “${names.pack}”. Never “1”.</div>${recs.slice(0,5).map(r=>`<button class="card" onclick='ask(corpora[S.corpus], corpora[S.corpus].records.find(x=>x.id==="${r.id}"))'>${r.title}</button>`).join("")}`;
+  } else if(S.tab==="activity"){
+    main=`<p class="rail">Local · no account</p><div class="card">Continue ${S.trail.at(-1)||"nothing yet"}</div><div class="card">Trail length ${S.trail.length}</div>`+
+      (c.hop==="watermark"?`<div class="card">Watermark book ${c.clock}<input type="range" min="1" max="${c.clockMax}" value="${c.clock}" oninput="corpora[S.corpus].clock=+this.value;render()"></div>`:"");
+  } else {
+    const hits=recs.filter(r=>r.title.toLowerCase().includes(S.q.toLowerCase()));
+    main=`<input type="search" placeholder="Search ${c.name}" value="${S.q}" oninput="S.q=this.value;render()">`+
+      hits.map(r=>`<button class="card" onclick='ask(corpora[S.corpus], corpora[S.corpus].records.find(x=>x.id==="${r.id}"))'>${r.title}<br><small>${hop(c,r)}</small></button>`).join("")+
+      (S.q&&!hits.length?`<p class="muted">No visible hit. Unborn names stay hidden.</p>`:"");
+  }
+  app.innerHTML = `
+    <header>
+      <div class="brand">${c.name}</div>
+      ${corpora.map((x,i)=>`<button class="chip ${i===S.corpus?"on":""}" onclick="setCorpus(${i})">${x.name}</button>`).join("")}
+    </header>
+    <main>${main}</main>
+    ${open?"":`<nav>${tabs.map(t=>`<button class="tab ${S.tab===t?"on":""}" onclick="S.tab='${t}';render()">${names[t]}</button>`).join("")}</nav>`}
+    ${pending?`<div class="sheet" onclick="S.pending=null;render()"><div class="panel" onclick="event.stopPropagation()">
+      <h2>${copy(c,pending).t}</h2><p>${copy(c,pending).b}</p>
+      <button onclick="S.pending=null;render()">Stay</button>
+      <button onclick='enter(corpora[S.corpus].records.find(x=>x.id==="${pending.id}"))'>Open as Extra</button>
+      ${c.hop==="watermark"&&pending.spoil?`<button onclick="corpora[S.corpus].clock=${pending.spoil};enter(corpora[S.corpus].records.find(x=>x.id===\'${pending.id}\'))">Step past and move watermark</button>`:""}
+    </div></div>`:""}`;
+}
+render();
+</script>
+</body>
+</html>
